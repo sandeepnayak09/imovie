@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0f171e] text-[#ffffff] font-sans overflow-x-hidden antialiased;
+    background-color: #0f171e;
+    color: #ffffff;
+  }
+
+  /* Custom Prime Video Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f171e;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1a242f;
+    border-radius: 4px;
+    border: 1px solid #2a3b4c;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00a8e1;
+  }
+}
+
+/* Hide scrollbar for carousel while preserving scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Movie Card Zoom & Glow */
+.prime-card-glow {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+.prime-card-glow:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 30px rgba(0, 168, 225, 0.25), 0 0 1px 1px rgba(0, 168, 225, 0.5);
+  z-index: 20;
+}
+
+/* Curved Screen effect for Auditorium */
+.auditorium-screen {
+  background: linear-gradient(180deg, rgba(0, 168, 225, 0.4) 0%, rgba(0, 168, 225, 0.02) 100%);
+  border-top: 3px solid #00a8e1;
+  border-radius: 50% 50% 0 0 / 20px 20px 0 0;
+  box-shadow: 0 -10px 30px rgba(0, 168, 225, 0.3);
+}
+
+/* Print Ticket Styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-ticket, #printable-ticket * {
+    visibility: visible;
+  }
+  #printable-ticket {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+}
