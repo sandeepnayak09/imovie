@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "iMovies - Amazon Prime Video styled Movie Ticket Booking Application",
   "scripts": {
+    "build": "cd client && npm run build",
     "server": "cd server && node server.js",
     "server:dev": "cd server && nodemon server.js",
     "client": "cd client && npm run dev",
