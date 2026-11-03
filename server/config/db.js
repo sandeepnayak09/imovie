@@ -7,17 +7,20 @@ const connectDB = async () => {
 
   try {
     mongoose.set('strictQuery', false);
-    // Try to connect with a short timeout so server starts without delay if Mongo isn't running
+    // Allow sufficient time for cloud MongoDB Atlas cluster handshake (10s)
     const conn = await mongoose.connect(mongoURI, {
-      serverSelectionTimeoutMS: 2500,
+      serverSelectionTimeoutMS: 10000,
     });
     isConnected = true;
-    console.log(` MongoDB Connected: ${conn.connection.host}`);
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
     return true;
   } catch (error) {
-    console.warn(`️ MongoDB not detected at ${mongoURI}.`);
-    console.log(` Seamlessly activating High-Performance In-Memory & File-Backed Storage Engine!`);
-    console.log(` All Mongoose models, real-time seat locks, and routes are 100% operational.`);
+    const safeURI = mongoURI.includes('@')
+      ? mongoURI.replace(/:([^@]+)@/, ':****@')
+      : mongoURI;
+    console.warn(`⚠️ MongoDB not connected at ${safeURI}: ${error.message}`);
+    console.log(`⚡ Seamlessly activating High-Performance In-Memory & File-Backed Storage Engine!`);
+    console.log(`✅ All Mongoose models, real-time seat locks, and routes are 100% operational.`);
     isConnected = false;
     return false;
   }

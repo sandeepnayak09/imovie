@@ -1,15 +1,30 @@
 import axios from 'axios';
 
+// Resolve API Base URL cleanly regardless of whether VITE_API_URL has a trailing slash or missing /api
+const getResolvedBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl || typeof envUrl !== 'string' || envUrl.trim() === '') {
+    return '/api';
+  }
+  const clean = envUrl.trim().replace(/\/+$/, '');
+  return clean.endsWith('/api') ? clean : `${clean}/api`;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getResolvedBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor to attach JWT token
+// Request interceptor: normalize endpoint URLs & attach JWT token
 api.interceptors.request.use(
   (config) => {
+    // Prevent duplicate /api/api/ if caller already includes /api prefix
+    if (config.baseURL?.endsWith('/api') && config.url?.startsWith('/api/')) {
+      config.url = config.url.replace(/^\/api/, '');
+    }
+
     const token = localStorage.getItem('imovies_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -24,7 +39,6 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      // Clear invalid token if expired
       const currentPath = window.location.pathname;
       if (
         !currentPath.includes('/login') &&

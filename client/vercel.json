@@ -6,7 +6,11 @@
       "destination": "https://imovie-2ax2.onrender.com/api/:path*"
     },
     {
-      "source": "/((?!api/).*)",
+      "source": "/auth/:path*",
+      "destination": "https://imovie-2ax2.onrender.com/api/auth/:path*"
+    },
+    {
+      "source": "/((?!api/|auth/).*)",
       "destination": "/index.html"
     }
   ]

@@ -32,7 +32,7 @@ services:
       - key: SENDER_NAME
         value: iMovies
       - key: CLIENT_URL
-        value: https://imovies-client.onrender.com
+        value: https://imovie-sooty.vercel.app
 
   # ===============================================
   # iMovies Frontend Client (Render Static Site)

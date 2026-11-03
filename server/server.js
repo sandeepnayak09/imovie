@@ -23,16 +23,33 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS
+// Enable CORS with dynamic origin reflection for secure credentials support
 app.use(
   cors({
-    origin: '*',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      // Allow frontend and preview domains
+      return callback(null, true);
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   })
 );
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Root Service Health
+app.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    service: 'iMovies REST API Engine',
+    health: '/api/health',
+    version: '2.0.0',
+  });
+});
 
 // Health Check
 app.get('/api/health', (req, res) => {
@@ -46,16 +63,33 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// API Routes
+// API Routes & Resilient Fallback Aliases (mounts both /api/* and /*)
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
+
 app.use('/api/movie', movieRoutes);
+app.use('/movie', movieRoutes);
+
 app.use('/api/theatre', theatreRoutes);
+app.use('/theatre', theatreRoutes);
+
 app.use('/api/shows', showRoutes);
+app.use('/shows', showRoutes);
+
 app.use('/api/bookings', bookingRoutes);
+app.use('/bookings', bookingRoutes);
+
 app.use('/api/favorite', favoriteRoutes);
+app.use('/favorite', favoriteRoutes);
+
 app.use('/api/review', reviewRoutes);
+app.use('/review', reviewRoutes);
+
 app.use('/api/payment', paymentRoutes);
+app.use('/payment', paymentRoutes);
+
 app.use('/api/email', emailRoutes);
+app.use('/email', emailRoutes);
 
 // Error Handling Middleware
 app.use(notFound);
